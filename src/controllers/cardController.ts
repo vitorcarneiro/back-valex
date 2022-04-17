@@ -9,13 +9,7 @@ import { Request, Response} from "express";
 export async function createCard(req: Request, res: Response) {
     const { employeeId, type } = req.body;
 
-    try {
-        console.log('aqui');
-        await cardServices.createCard(employeeId, type);
+    await cardServices.createCard(employeeId, type);
 
-        res.status(201).send(`${type} card created`);
-    } catch (err) {
-        console.error(err);
-        res.sendStatus(500);
-    }
+    res.status(201).send(`${type} card created`);
 }

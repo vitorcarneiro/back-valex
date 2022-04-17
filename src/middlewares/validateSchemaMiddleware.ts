@@ -4,9 +4,9 @@ import { unprocessableEntity } from "./handleErrorsMiddleware.js";
 
 export function validateSchemaMiddleware(schema: ObjectSchema) {
     return (req: Request, res: Response, next: Function) => {
-      const validation = schema.validate(req.body);
+      const validation = schema.validate(req.body, { abortEarly: false });
       if (validation.error) {
-        return unprocessableEntity();
+        throw unprocessableEntity(validation.error.message);
       }
       next();
     }
