@@ -162,3 +162,10 @@ export async function recharges(cardId: number) {
 
   return result.rows;
 }
+
+export async function findCardByNumber(number: string) {
+  const result = await connection.query<Card, [string]>(
+    `SELECT * FROM cards WHERE number=$1`,[number]);
+
+  return result.rows[0];
+}
