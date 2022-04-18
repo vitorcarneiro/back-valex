@@ -19,9 +19,17 @@ export async function activateCard(req: Request, res: Response) {
 }
 
 export async function showCardBalance(req: Request, res: Response) {
-    const { id :cardId } = req.params;
+    const { id: cardId } = req.params;
 
     const cardBalance = await cardServices.getCardBalance(cardId);
 
     res.send(cardBalance);
+}
+
+export async function recharge(req: Request, res: Response) {
+    const { id: cardId, amount } = req.params;
+
+    await cardServices.recharge(cardId, amount);
+
+    res.status(200).send(`card '${cardId}' activated`);
 }
