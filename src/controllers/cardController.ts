@@ -15,6 +15,6 @@ export async function activateCard(req: Request, res: Response) {
 
     await cardServices.activateCard(cardId, cvv, password);
 
-    res.status(202).send(` ${cardId} card activate`);
+    res.status(200).send(`card '${cardId}' activate`);
 }
 
