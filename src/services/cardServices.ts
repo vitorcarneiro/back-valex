@@ -86,7 +86,7 @@ export async function activateCard(cardId: any, cvv: string, password: string) {
 
     if(cvv !== card.securityCode) throw errors.unauthorized(`CVV does not match`);
 
-    await cardRepository.update(id, { password: bcrypt.hashSync(password, 10) });
+    await cardRepository.update(id, { "password": bcrypt.hashSync(password, 10),  "isBlocked": false });
 }
 
 export function isCardExpired(expirationDate: string) {
