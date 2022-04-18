@@ -7,12 +7,11 @@ import * as errors from "../middlewares/handleErrorsMiddleware.js";
 
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, isVirtual: boolean) {
     const employee = await employeeServices.validateId(employeeId);
-
     if (await employeeAlreadyHasTypeCard(employeeId, type)) throw errors.conflict(`employee already has a ${type} card`);
 
     const cardData = await cardConstructor(employee.fullName, employeeId, type, isVirtual);
-
-    await cardRepository.insert(cardData);
+    
+    return await cardRepository.insert(cardData);
 }
 
 export async function employeeAlreadyHasTypeCard(employeeId: number, type: cardRepository.TransactionTypes) {
@@ -41,9 +40,9 @@ export async function cardConstructor(employeeName: string, employeeId: number, 
 export async function generateCardNumber(cardBrand: 'mastercard' | 'visa' | 'amex' | 'elo') {
     let cardNumber = faker.finance.creditCardNumber(cardBrand).replace(/\s|-/g, '');
 
-    if (await cardRepository.findByCardDetails(cardNumber))
+    if (await cardRepository.findByCardDetails(cardNumber)) 
         return generateCardNumber(cardBrand);
-
+    
     return cardNumber;
 }
 
@@ -70,8 +69,9 @@ export function generateExpirationDate(durationYears: number) {
     return dayjs().add(durationYears, 'year').format('MM/YY');
 }
 
-export async function activateCard(cardId: number) {
-    const card = await cardRepository.findByCardDetails()
-
+export async function activateCard(cardId: any) {
+    const id = parseInt(cardId);
+    const card = await cardRepository.findByCardById(id)
+    console.log(card);
 
 }

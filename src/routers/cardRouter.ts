@@ -7,6 +7,6 @@ import createCardSchema from '../schemas/cardsSchemas.js';
 const cardRouter = Router();
 
 cardRouter.post('/cards/create', validateApiKeyMiddleware, validateSchemaMiddleware(createCardSchema), cardController.createPhysicalCard);
-cardRouter.patch('/cards/:id/activate', validateSchemaMiddleware(createCardSchema), cardController.createPhysicalCard);
+cardRouter.patch('/cards/:id/activate', cardController.activateCard);
 
 export default cardRouter;

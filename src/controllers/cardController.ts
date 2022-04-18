@@ -10,9 +10,10 @@ export async function createPhysicalCard(req: Request, res: Response) {
 }
 
 export async function activateCard(req: Request, res: Response) {
-    const { id: cardId } = req.params;
+    const { id :cardId } = req.params;
+    
+    await cardServices.activateCard(cardId);
 
-
-    res.status(202).send(` physical card created`);
+    res.status(202).send(` ${cardId} card activate`);
 }
 
