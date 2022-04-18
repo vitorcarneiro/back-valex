@@ -1,5 +1,6 @@
 import faker from '@faker-js/faker';
 import dayjs from 'dayjs';
+import bcrypt from 'bcrypt';
 
 import * as employeeServices from "./employeeServices.js";
 import * as cardRepository from "../repositories/cardRepository.js";
@@ -71,19 +72,28 @@ export function generateExpirationDate(durationYears: number) {
 
 export async function activateCard(cardId: any, cvv: string, password: string) {
     const id = parseInt(cardId);
-    if (isNaN(id)) throw errors.conflict(`cardId must be a number`);
+    if (isNaN(id)) throw errors.unprocessableEntity(`cardId must be a number`);
 
     const card = await cardRepository.findByCardById(id)
-    if (!card) throw errors.notFound(`cardId "${cardId}" not found`);
+    if (!card) throw errors.notFound(`card '${cardId}' not found`);
 
-    console.log(card);
+    if(card.password !== null) throw errors.badRequest(`card '${cardId}' already activated`);
 
+    if (isCardExpired(card.expirationDate)) throw errors.notAcceptable(`card '${cardId}' is expired`);
 
+    if(cvv !== card.securityCode) throw errors.unauthorized(`CVV does not match`);
+
+    await cardRepository.update(id, { password: bcrypt.hashSync(password, 10) });
 }
 
-export async function cardIsExpired(employeeId: number, type: cardRepository.TransactionTypes) {
-    const card = await cardRepository.findByTypeAndEmployeeId(type, employeeId);
-    if (card) return true;
+export function isCardExpired(expirationDate: string) {
+    if(expirationDate.length !== 5) throw errors.conflict(`registered expiration date is wrong`)
     
+    const expirationDateArray = expirationDate.split('/');
+    if(expirationDateArray.length !== 2) throw errors.conflict(`registered expiration date is wrong`)
+
+    if(expirationDateArray[0] > dayjs().format('MM') && expirationDateArray[1] > dayjs().format('YY'))
+        return true;
+
     return false;
 }

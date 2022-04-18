@@ -11,8 +11,9 @@ export async function createPhysicalCard(req: Request, res: Response) {
 
 export async function activateCard(req: Request, res: Response) {
     const { id :cardId } = req.params;
+    const { cvv, password } = req.body;
 
-    await cardServices.activateCard(cardId, '123', '1235');
+    await cardServices.activateCard(cardId, cvv, password);
 
     res.status(202).send(` ${cardId} card activate`);
 }

@@ -7,5 +7,5 @@ export const create = joi.object({
 
 export const activate = joi.object({
   cvv: joi.string().length(3).pattern(/^[0-9]+$/, 'numbers').required(),
-  password: joi.string().min(4).max(6).pattern(/^[0-9]+$/, 'numbers').required()
+  password: joi.string().length(4).pattern(/^[0-9]+$/, 'numbers').required()
 });
