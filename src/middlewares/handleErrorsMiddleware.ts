@@ -16,12 +16,13 @@ export function notFound(message?: string) {
     return { type: "not_found", message:  message};
 }
   
-export function conflict() {
-    return { type: "conflict" };
+export function conflict(message?: string) {
+    if (!message) return { type: "conflict" };
+    return { type: "conflict", message:  message};
 }
 
 export function unprocessableEntity(message?: string) {    
-    if (!message) throw { type: "unprocessable_entity" }
+    if (!message) return { type: "unprocessable_entity" }
     return { type: "unprocessable_entity", message: message};
 }
   
