@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 
 import * as employeeServices from "./employeeServices.js";
 import * as cardRepository from "../repositories/cardRepository.js";
+import * as rechargeRepository from "../repositories/rechargeRepository.js";
 import * as errors from "../middlewares/handleErrorsMiddleware.js";
 
 export async function createCard(employeeId: number, type: cardRepository.TransactionTypes, isVirtual: boolean) {
@@ -71,7 +72,7 @@ export function generateExpirationDate(durationYears: number) {
 }
 
 export async function activateCard(cardId: any, cvv: string, password: string) {
-    const id = parseInt(cardId);
+    const id = Number(cardId);
     if (isNaN(id)) throw errors.unprocessableEntity(`cardId must be a number`);
 
     const card = await cardRepository.findByCardById(id)
@@ -99,7 +100,7 @@ export function isCardExpired(expirationDate: string) {
 }
 
 export async function getCardBalance(cardId: string) {
-    const id = parseInt(cardId);
+    const id =Number(cardId);
     if (isNaN(id)) throw errors.unprocessableEntity(`cardId must be a number`);
 
     const card = await cardRepository.findByCardById(id)
@@ -113,4 +114,19 @@ export async function getCardBalance(cardId: string) {
     const balance = rechargesAmount - transactionsAmount;
 
     return { balance, transactions, recharges };
+}
+
+export async function recharge(cardId: string, amount: string) {
+    const id = Number(cardId);
+    if (isNaN(id)) throw errors.unprocessableEntity(`cardId must be a number`);
+
+    const card = await cardRepository.findByCardById(id)
+    if (!card) throw errors.notFound(`card '${cardId}' not found`);
+    if (isCardExpired(card.expirationDate)) throw errors.notAcceptable(`card '${cardId}' is expired`);
+
+    const value = Number(amount);
+    if (isNaN(value)) throw errors.unprocessableEntity(`recharge amount must be a number`);
+    if (value <= 0) throw errors.notAcceptable(`recharge amount must be higher than 0`);
+
+    await rechargeRepository.insert({"cardId": id, "amount": value});
 }
