@@ -69,9 +69,21 @@ export function generateExpirationDate(durationYears: number) {
     return dayjs().add(durationYears, 'year').format('MM/YY');
 }
 
-export async function activateCard(cardId: any) {
+export async function activateCard(cardId: any, cvv: string, password: string) {
     const id = parseInt(cardId);
+    if (isNaN(id)) throw errors.conflict(`cardId must be a number`);
+
     const card = await cardRepository.findByCardById(id)
+    if (!card) throw errors.notFound(`cardId "${cardId}" not found`);
+
     console.log(card);
 
+
+}
+
+export async function cardIsExpired(employeeId: number, type: cardRepository.TransactionTypes) {
+    const card = await cardRepository.findByTypeAndEmployeeId(type, employeeId);
+    if (card) return true;
+    
+    return false;
 }
