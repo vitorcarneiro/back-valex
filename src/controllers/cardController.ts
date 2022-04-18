@@ -31,5 +31,5 @@ export async function recharge(req: Request, res: Response) {
 
     await cardServices.recharge(cardId, amount);
 
-    res.status(200).send(`card '${cardId}' activated`);
+    res.status(200).send(`recharged card '${cardId}'`);
 }
