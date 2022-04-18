@@ -8,5 +8,6 @@ const cardRouter = Router();
 
 cardRouter.post('/cards/create', validateApiKeyMiddleware, validateSchemaMiddleware(cardsSchemas.create), cardController.createPhysicalCard);
 cardRouter.patch('/cards/:id/activate', validateSchemaMiddleware(cardsSchemas.activate), cardController.activateCard);
+cardRouter.get('/cards/:id', cardController.showCardBalance);
 
 export default cardRouter;

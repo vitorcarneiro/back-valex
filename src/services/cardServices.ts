@@ -97,3 +97,20 @@ export function isCardExpired(expirationDate: string) {
 
     return false;
 }
+
+export async function getCardBalance(cardId: string) {
+    const id = parseInt(cardId);
+    if (isNaN(id)) throw errors.unprocessableEntity(`cardId must be a number`);
+
+    const card = await cardRepository.findByCardById(id)
+    if (!card) throw errors.notFound(`card '${cardId}' not found`);
+
+    const transactions = await cardRepository.payments(id);
+    const recharges = await cardRepository.recharges(id);
+
+    const rechargesAmount = recharges.reduce((acc, cur) => acc + cur.amount, 0);
+    const transactionsAmount = transactions.reduce((acc, cur) => acc + cur.amount, 0);
+    const balance = rechargesAmount - transactionsAmount;
+
+    return { balance, transactions, recharges };
+}

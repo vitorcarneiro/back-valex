@@ -22,6 +22,21 @@ export interface Card {
   type: TransactionTypes;
 }
 
+export interface Payments {
+  id: number;
+  cardId: number;
+  businessId: number;
+  businessName: string;
+  timestamp: Date;
+  amount: number
+}
+export interface Recharges {
+  id: number;
+  cardId: number;
+  timestamp: Date;
+  amount: number
+}
+
 export type CardInsertData = Omit<Card, "id">;
 export type CardUpdateData = Partial<Card>;
 
@@ -129,4 +144,21 @@ export async function findByCardById(cardId: number) {
     `SELECT * FROM cards WHERE id=$1`,[cardId]);
 
   return result.rows[0];
+}
+
+export async function payments(cardId: number) {
+  const result = await connection.query<Payments, [number]>(
+    `SELECT p.id, p."cardId", p."businessId", b.name as "businessName", p.timestamp, p.amount
+      FROM payments p
+      JOIN businesses b ON p."businessId"=b.id
+      WHERE p."cardId"=$1`,[cardId]);
+
+  return result.rows;
+}
+
+export async function recharges(cardId: number) {
+  const result = await connection.query<Recharges, [number]>(
+    `SELECT * FROM recharges WHERE "cardId"=$1`,[cardId]);
+
+  return result.rows;
 }

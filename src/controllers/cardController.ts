@@ -18,3 +18,10 @@ export async function activateCard(req: Request, res: Response) {
     res.status(200).send(`card '${cardId}' activated`);
 }
 
+export async function showCardBalance(req: Request, res: Response) {
+    const { id :cardId } = req.params;
+
+    const cardBalance = await cardServices.getCardBalance(cardId);
+
+    res.send(cardBalance);
+}
